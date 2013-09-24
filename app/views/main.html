@@ -1,0 +1,30 @@
+<div class="col-lg-8 col-lg-offset-2">
+	<div class="row">
+		<h1>Contacts</h1>
+		<a href="#/add" class="pull-right"><i ng-click="addEditContact()" class="glyphicon glyphicon-plus"> </i> Add</a>
+	</div>
+	<div class="row" >
+		<div class="input-group">
+			<input type="text" class="form-control"  ng-model="inputSearch" placeholder="Search by name, phone, email">
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="button">Search</button>
+			</span>
+		</div>
+	</div>
+
+	
+	<div class="row contactList">
+		<div class="row" ng-repeat="contact in contacts | filter:inputSearch">
+			<div class="contact-name col-lg-4">{{ contact.contact_name }}</div>
+			<div class="contact-info col-lg-7">
+				<span class="contact-phone">{{ contact.contact_phone }}</span>
+				<a href="mailto:{{ contact.contact_email }}">{{ contact.contact_email }}</a>
+			</div>
+			<div class="contact-options col-lg-1">
+				<a href="#/add:{{ contact.id }}"><i class="glyphicon glyphicon-pencil"></i></a>
+				<a href="#/delecte:{{ contact.id }}"><i class="glyphicon glyphicon-trash"></i></a>
+			</div>
+		</div>
+
+	</div>
+</div>
