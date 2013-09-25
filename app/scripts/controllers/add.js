@@ -2,10 +2,9 @@
 
 angular.module('PractoApp')
 .controller('AddCtrl',['$scope', 'contactService', '$location', function ($scope, contactService, $location) {
-	contactService.list().success(function(data,status){
-		console.log(status);
-		$scope.contacts = data.contacts;
-	});
+	contactService.list().then(function(){
+				$scope.contacts = JSON.parse(localStorage.getItem('contacts'));	
+			});
 	$scope.addContact = function(){
 		contactService.newContact($.param({
 			contact_name : $scope.inputName,
