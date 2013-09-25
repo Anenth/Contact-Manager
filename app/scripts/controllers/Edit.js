@@ -22,7 +22,11 @@ angular.module('PractoApp')
 		})).success(function(data, status){
 			if(status === 201){
 				alert('Contact updated');
-				$location.path('/');
+				$location.path('../');
+			}
+		}).error(function(data){
+			for(var i in data){
+				alert(data[i]);
 			}
 		});
 	};

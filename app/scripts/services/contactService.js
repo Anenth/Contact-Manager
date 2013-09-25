@@ -6,7 +6,7 @@ angular.module('PractoApp')
   var url = 'http://ui-proj.practodev.in/contacts';
   return{
     /**
-     * [list fetchs all the contacts from the server]
+     * [list fetchs all the contacts from the server and save it to localStorage]
      * @return {[http object]} [http object for furture processing from the calling function]
      */
     list: function(){
@@ -15,7 +15,8 @@ angular.module('PractoApp')
         url:url,
         headers:{'X-USER':authEmail}
       }).success(function(data, status){
-        localStorage.setItem('contacts', JSON.stringify(data.contacts));
+        if( status === 201)
+          localStorage.setItem('contacts', JSON.stringify(data.contacts));
       });
     },
     /**
