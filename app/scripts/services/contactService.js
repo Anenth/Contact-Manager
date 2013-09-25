@@ -19,7 +19,29 @@ angular.module('PractoApp')
         data: data,
         headers:{'X-USER':authEmail, 'Content-Type': 'application/x-www-form-urlencoded'}
       });
-    }
+    },
+    get: function(params){
+      return $http({
+        method:'GET',
+        url:url + '/' + params,
+        headers:{'X-USER':authEmail}
+      });
+    },
+    update: function(params, data){
+      return $http({
+        method:'PUT',
+        url:url + '/' + params,
+        data: data,
+        headers:{'X-USER':authEmail, 'Content-Type': 'application/x-www-form-urlencoded'}
+      });
+    },
+    delete: function(params){
+      return $http({
+        method:'DELETE',
+        url:url + '/' + params,
+        headers:{'X-USER':authEmail}
+      });
+    },
   };
   /*var resource = $resource('http://ui-proj.practodev.in/contacts', {},{
     list:{

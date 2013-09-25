@@ -26,6 +26,11 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+    <div class="container">
+        <div class="row text-center">
+            <h1>Contacts Manager</h1>
+        </div>
+    </div>
     <div class="container" ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -37,9 +42,10 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
+        <script src="scripts/services/contactService.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/add.js"></script>
-        <script src="scripts/services/contactService.js"></script>
+        <script src="scripts/controllers/Edit.js"></script>
         <!-- endbuild -->
 </body>
 </html>

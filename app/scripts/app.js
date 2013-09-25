@@ -9,6 +9,9 @@ angular.module('PractoApp', ['ngRoute', 'ngResource'])
       }).when('/add', {
         templateUrl: 'views/add.html',
         controller: 'AddCtrl'
+      }).when('/edit/:id', {
+        templateUrl: 'views/add.html',
+        controller: 'EditCtrl'
       })
       .otherwise({
         redirectTo: '/'
