@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('PractoApp', ['ngRoute', 'ngResource'])
+angular.module('PractoApp', ['ngRoute'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
