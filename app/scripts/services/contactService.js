@@ -9,7 +9,7 @@ angular.module('ContactManager')
    * @param  {[String]} data [ the payload ]
    * @param  {[boolean]} alert [ disable/enable alerts ]
    */
-   var sendRequestToServer = function(type, data, alert){
+   var sendRequestToServer = function(type, url, data, alert){
     $http({
       method: type,
       url:url,
@@ -37,11 +37,20 @@ angular.module('ContactManager')
      list: function(){
       if(navigator.onLine){
         if(localStorage.getItem('contactsAdded')){
-          var data = JSON.parse(localStorage.getItem('contactsAdded'))
+          var data = JSON.parse(localStorage.getItem('contactsAdded'));
           for(var i in data){
-            sendRequestToServer('POST', $.param(data[i]));
+            sendRequestToServer('POST', url, $.param(data[i]));
           }
           localStorage.removeItem('contactsAdded');
+        }
+        if(localStorage.getItem('contactsUpdated')){
+          var data = JSON.parse(localStorage.getItem('contactsUpdated'));
+          var urlNew;
+          for(var i in data){
+            urlNew = url + '/' + data[i].id;
+            sendRequestToServer('PUT', urlNew, $.param(data[i]));
+          }
+          localStorage.removeItem('contactsUpdated');
         }
         return $http({
           method:'GET',
@@ -64,7 +73,7 @@ angular.module('ContactManager')
      newContact: function(data){
 
       if(navigator.onLine){
-        sendRequestToServer('POST', data, true);
+        sendRequestToServer('POST',url , data, true);
       }else{
         /**
         * Covertion from param to JSON and pushing to the localStorage
@@ -84,7 +93,6 @@ angular.module('ContactManager')
         else{
           localStorage.setItem('contactsAdded', JSON.stringify(Array(dataJson)));
         }
-
         localStorage.setItem('contacts', JSON.stringify(dataSetMaster));
         FlashService.show('Contact added', 'success');
         $location.path('../');
@@ -92,15 +100,22 @@ angular.module('ContactManager')
     },
     /**
      * [get fetch individual contact]
-     * @param  {[number]} params [unique contact id]
+     * @param  {[number]} id [unique contact id]
      * @return {[http object]} [http object for furture processing from the calling function]
      */
-     get: function(params){
-      return $http({
-        method:'GET',
-        url:url + '/' + params,
-        headers:{'X-USER':authEmail}
-      });
+     get: function(id){
+      if(!navigator.onLine){
+        return $http({
+          method:'GET',
+          url:url + '/' + id,
+          headers:{'X-USER':authEmail}
+        });
+      }else{
+        var data = JSON.parse(localStorage.getItem('contacts'));
+        var contact = $.grep(data, function(e){return e.id == id} );
+        return $q.when(contact);
+      }
+
     },
     /**
      * [update updates the individual contact]
@@ -109,12 +124,41 @@ angular.module('ContactManager')
      * @return {[http object]} [http object for furture processing from the calling function]
      */
      update: function(params, data){
-      return $http({
-        method:'PUT',
-        url:url + '/' + params,
-        data: data,
-        headers:{'X-USER':authEmail, 'Content-Type': 'application/x-www-form-urlencoded'}
-      });
+      if(!navigator.onLine){
+        var urlNew = url + '/' + params;
+        sendRequestToServer('PUT', urlNew, data, true);
+      }else{
+        /**
+        * Covertion from param to JSON and pushing to the localStorage
+        * Master data is the actual data to be on the server
+        * Slave data is to be saved to the Server 
+        * Slave data is been saved to the localStorage for future sync 
+        **/
+        var dataJson = JSON.parse('{"' + decodeURI(data).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+        var dataSetMaster = JSON.parse(localStorage.getItem('contacts'));
+        var dataSetSlave = JSON.parse(localStorage.getItem('contactsUpdated'));
+        var search = function(id){
+          for(var i in dataSetMaster){
+            if(dataSetMaster[i].id == id){
+              return i;
+            }
+          }
+        };
+        var i = search(params);
+        dataSetMaster.splice(i, 1);
+        dataSetMaster.push(dataJson);
+        //check if the localStorage exsists
+        if(dataSetSlave){
+          dataSetSlave.push(dataJson);
+          localStorage.setItem('contactsUpdated', JSON.stringify(dataSetSlave));
+        }
+        else{
+          localStorage.setItem('contactsUpdated', JSON.stringify(Array(dataJson)));
+        }
+        localStorage.setItem('contacts', JSON.stringify(dataSetMaster));
+        FlashService.show('Contact Updated', 'success');
+        $location.path('../');
+      }
     },
     /**
      * [delete deletes the contact object]
