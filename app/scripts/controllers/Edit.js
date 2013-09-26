@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('PractoApp')
+angular.module('ContactManager')
 .controller('EditCtrl',['$scope', 'contactService', '$routeParams', '$location', function ($scope, contactService, $routeParams, $location) {
 	contactService.get($routeParams.id).success(function(data,status){
 		if(status === 201){
