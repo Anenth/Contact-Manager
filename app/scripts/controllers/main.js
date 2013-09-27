@@ -6,8 +6,8 @@ angular.module('ContactManager')
 * [fetchContacts Fetches all the contacts from the sever/localStorage]
 * 
 */
-	var fetchContacts = function(){
-		contactService.list().then(function(data){
+var fetchContacts = function(){
+	contactService.list().then(function(data){
 			/**
 			* checking the data is from server or localStorage
 			* the data is stored in LocalStorage without the contact attribute
@@ -18,9 +18,9 @@ angular.module('ContactManager')
 				$scope.contacts = data;
 		});
 
-	};
+};
 
-	fetchContacts();
+fetchContacts();
 	/**
 	* [delete Sends delete request to the server]
 	* @param  {[string]} name [contact name, used for displaying in the confirmBox]
@@ -30,14 +30,10 @@ angular.module('ContactManager')
 	$scope.delete = function(name, id){
 		var confirmValue=confirm('You are about to delete contact for"' + name + '". Proceed ?');
 		if(confirmValue){
-			contactService.delete(id).success(function(data, status){
-				alert('deleted');
-				fetchContacts();
-			});
+			contactService.delete(id);
+			fetchContacts();
 		}
-
 	}
-
 }]);
 
 /*$scope.contacts = contactService.list();

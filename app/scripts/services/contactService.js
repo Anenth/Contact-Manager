@@ -27,7 +27,14 @@ angular.module('ContactManager')
         }
       }
     });
-  }
+  };
+  var search = function(DataSet, id){
+    for(var i in DataSet){
+      if(DataSet[i].id == id){
+        return i;
+      }
+    }
+  };
 
   return{
     /**
@@ -51,6 +58,15 @@ angular.module('ContactManager')
             sendRequestToServer('PUT', urlNew, $.param(data[i]));
           }
           localStorage.removeItem('contactsUpdated');
+        }
+        if(localStorage.getItem('contactsDeleted')){
+          var data = JSON.parse(localStorage.getItem('contactsDeleted'));
+          var urlNew;
+          for(var i in data){
+            urlNew = url + '/' + data[i];
+            sendRequestToServer('DELETE', urlNew);
+          }
+          localStorage.removeItem('contactsDeleted');
         }
         return $http({
           method:'GET',
@@ -137,14 +153,7 @@ angular.module('ContactManager')
         var dataJson = JSON.parse('{"' + decodeURI(data).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
         var dataSetMaster = JSON.parse(localStorage.getItem('contacts'));
         var dataSetSlave = JSON.parse(localStorage.getItem('contactsUpdated'));
-        var search = function(id){
-          for(var i in dataSetMaster){
-            if(dataSetMaster[i].id == id){
-              return i;
-            }
-          }
-        };
-        var i = search(params);
+        var i = search(dataSetMaster, params);
         dataSetMaster.splice(i, 1);
         dataSetMaster.push(dataJson);
         //check if the localStorage exsists
@@ -166,11 +175,33 @@ angular.module('ContactManager')
      * @return {[http object]} [http object for furture processing from the calling function]
      */
      delete: function(params){
-      return $http({
-        method:'DELETE',
-        url:url + '/' + params,
-        headers:{'X-USER':authEmail}
-      });
-    },
+        if(!navigator.onLine){
+          var urlNew = url + '/' + params;
+          sendRequestToServer('DELETE', urlNew, null, true);
+        }else{
+          /**
+          * Master data is the actual data to be on the server
+          * Slave data is to be saved to the Server 
+          * Slave data is been saved to the localStorage for future sync 
+          **/
+          var dataSetMaster = JSON.parse(localStorage.getItem('contacts'));
+          var dataSetSlave = JSON.parse(localStorage.getItem('contactsDeleted'));
+          
+          var i = search(dataSetMaster, params);
+          dataSetMaster.splice(i, 1);
+          //check if the localStorage exsists
+          if(dataSetSlave){
+            dataSetSlave.push(params);
+            localStorage.setItem('contactsDeleted', JSON.stringify(dataSetSlave));
+          }
+          else{
+            var temp = [];
+            temp.push(params);
+            localStorage.setItem('contactsDeleted', JSON.stringify(temp));
+          }
+          localStorage.setItem('contacts', JSON.stringify(dataSetMaster));
+          FlashService.show('Contact Deleted', 'success');
+        }
+    }
   };
 });
