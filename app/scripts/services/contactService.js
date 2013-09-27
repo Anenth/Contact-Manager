@@ -140,7 +140,7 @@ angular.module('ContactManager')
      * @return {[http object]} [http object for furture processing from the calling function]
      */
      update: function(params, data){
-      if(!navigator.onLine){
+      if(navigator.onLine){
         var urlNew = url + '/' + params;
         sendRequestToServer('PUT', urlNew, data, true);
       }else{
@@ -175,7 +175,7 @@ angular.module('ContactManager')
      * @return {[http object]} [http object for furture processing from the calling function]
      */
      delete: function(params){
-        if(!navigator.onLine){
+        if(navigator.onLine){
           var urlNew = url + '/' + params;
           sendRequestToServer('DELETE', urlNew, null, true);
         }else{
