@@ -97,6 +97,7 @@ angular.module('ContactManager')
         * Slave data is to be saved to the Server 
         * Slave data is been saved to the localStorage for future sync 
         **/
+        var data = decodeURIComponent(data);
         var dataJson = JSON.parse('{"' + decodeURI(data).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
         var dataSetMaster = JSON.parse(localStorage.getItem('contacts'));
         var dataSetSlave = JSON.parse(localStorage.getItem('contactsAdded'));
@@ -120,7 +121,7 @@ angular.module('ContactManager')
      * @return {[http object]} [http object for furture processing from the calling function]
      */
      get: function(id){
-      if(!navigator.onLine){
+      if(navigator.onLine){
         return $http({
           method:'GET',
           url:url + '/' + id,
@@ -150,6 +151,7 @@ angular.module('ContactManager')
         * Slave data is to be saved to the Server 
         * Slave data is been saved to the localStorage for future sync 
         **/
+        var data = decodeURIComponent(data);
         var dataJson = JSON.parse('{"' + decodeURI(data).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
         var dataSetMaster = JSON.parse(localStorage.getItem('contacts'));
         var dataSetSlave = JSON.parse(localStorage.getItem('contactsUpdated'));
